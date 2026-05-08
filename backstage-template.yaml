@@ -100,29 +100,109 @@
 
 
 
+# apiVersion: scaffolder.backstage.io/v1beta3
+# kind: Template
+
+# metadata:
+#   name: retrofit-jenkins-argocd
+#   title: Integrating CI/CD Into Existing Repo - JAVA
+#   description: Inject CI/CD directly into Desired Repo/Branch - JAVA
+
+# spec:
+#   owner: development
+#   type: service
+
+#   parameters:
+#     - title: Select Repo
+#       required:
+#         - repo
+  
+#       properties:
+
+#         repo:
+#           title: Select Repository
+#           type: string
+#           # ui:field: RepoDropdown
+
+#         environment:
+#           title: Environment
+#           type: string
+#           enum:
+#             - dev
+#             - prod
+#   steps:
+
+#     - id: fetch-base
+#       name: Fetch Template Files
+#       action: fetch:template
+#       input:
+#         url: ./template
+#         values:
+#           app_name: ${{ parameters.repo }}
+#           app_env: ${{ parameters.environment }}
+
+#     # - id: register
+#     #   name: Register in Catalog
+#     #   action: catalog:register
+#     #   input:
+#     #     repoContentsUrl: https://github.com/BackstageSSPPoC/${{ parameters.repo }}/blob/main
+#     #     catalogInfoPath: /catalog-info.yaml
+#     #     optional: true
+
+#     - id: push-to-main
+#       name: Inject CI/CD Directly
+#       action: github:push
+#       input:
+#         repoUrl: github.com?owner=BackstageSSPPoC&repo=${{ parameters.repo }}
+#         branch: main
+#         commitMessage: "chore: inject CI/CD template"
+#         sourcePath: ./
+
+#   output:
+#     links:
+#       - title: View Repository
+#         url: https://github.com/BackstageSSPPoC/${{ parameters.repo | trim }}/tree/main
+
+
+
+
+
+
+
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 
 metadata:
   name: retrofit-jenkins-argocd
-  title: Integrating CI/CD Into Existing Repo - JAVA
-  description: Inject CI/CD directly into Desired Repo/Branch - JAVA
+  title: Integrating CI/CD Into Existing Repo
+  description: Inject CI/CD directly into Desired Repo/Branch (Node.js / Java Maven / Java Gradle)
 
 spec:
   owner: development
   type: service
 
   parameters:
-    - title: Select Repo
+    - title: Select Repo & Language
       required:
         - repo
-  
+        - language
       properties:
 
         repo:
           title: Select Repository
           type: string
-          # ui:field: RepoDropdown
+
+        language:
+          title: Project Language / Build Tool
+          type: string
+          enum:
+            - nodejs
+            - java-maven
+            - java-gradle
+          enumNames:
+            - "Node.js (npm)"
+            - "Java (Maven)"
+            - "Java (Gradle)"
 
         environment:
           title: Environment
@@ -130,32 +210,74 @@ spec:
           enum:
             - dev
             - prod
+
   steps:
 
-    - id: fetch-base
-      name: Fetch Template Files
+    # ─── Common files: manifests, catalog-info, sonar, Dockerfile ───────────────
+
+    - id: fetch-common
+      name: Fetch Common Template Files
       action: fetch:template
       input:
         url: ./template
+        # Excludes language-specific Jenkinsfile folders — only root files are picked
+        exclude:                    # ← yeh add karo
+        - nodejs/**
+        - java-maven/**
+        - java-gradle/**
+        values:
+          app_name: ${{ parameters.repo }}
+          app_env: ${{ parameters.environment }}
+          language: ${{ parameters.language }}
+
+    # ─── Node.js Pipeline ────────────────────────────────────────────────────────
+
+    - id: fetch-nodejs-pipeline
+      name: Fetch Node.js Jenkinsfile
+      if: ${{ parameters.language === "nodejs" }}
+      action: fetch:template
+      input:
+        url: ./template/nodejs
+        targetPath: ./
         values:
           app_name: ${{ parameters.repo }}
           app_env: ${{ parameters.environment }}
 
-    # - id: register
-    #   name: Register in Catalog
-    #   action: catalog:register
-    #   input:
-    #     repoContentsUrl: https://github.com/BackstageSSPPoC/${{ parameters.repo }}/blob/main
-    #     catalogInfoPath: /catalog-info.yaml
-    #     optional: true
+    # ─── Java Maven Pipeline ─────────────────────────────────────────────────────
 
-    - id: push-to-main
+    - id: fetch-java-maven-pipeline
+      name: Fetch Java Maven Jenkinsfile
+      if: ${{ parameters.language === "java-maven" }}
+      action: fetch:template
+      input:
+        url: ./template/java-maven
+        targetPath: ./
+        values:
+          app_name: ${{ parameters.repo }}
+          app_env: ${{ parameters.environment }}
+
+    # ─── Java Gradle Pipeline ────────────────────────────────────────────────────
+
+    - id: fetch-java-gradle-pipeline
+      name: Fetch Java Gradle Jenkinsfile
+      if: ${{ parameters.language === "java-gradle" }}
+      action: fetch:template
+      input:
+        url: ./template/java-gradle
+        targetPath: ./
+        values:
+          app_name: ${{ parameters.repo }}
+          app_env: ${{ parameters.environment }}
+
+    # ─── Inject everything into the target repo ──────────────────────────────────
+
+    - id: push-to-repo
       name: Inject CI/CD Directly
       action: github:push
       input:
         repoUrl: github.com?owner=BackstageSSPPoC&repo=${{ parameters.repo }}
         branch: main
-        commitMessage: "chore: inject CI/CD template"
+        commitMessage: "chore: inject ${{ parameters.language }} CI/CD template"
         sourcePath: ./
 
   output:
