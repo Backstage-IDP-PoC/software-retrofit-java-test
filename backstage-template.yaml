@@ -199,10 +199,12 @@ spec:
             - nodejs
             - java-maven
             - java-gradle
+            - python
           enumNames:
             - "Node.js (npm)"
             - "Java (Maven)"
             - "Java (Gradle)"
+            - "Python (pip)"
 
         environment:
           title: Environment
@@ -225,6 +227,7 @@ spec:
         - nodejs/**
         - java-maven/**
         - java-gradle/**
+        - python/**
         values:
           app_name: ${{ parameters.repo }}
           app_env: ${{ parameters.environment }}
@@ -264,6 +267,19 @@ spec:
       action: fetch:template
       input:
         url: ./template/java-gradle
+        targetPath: ./
+        values:
+          app_name: ${{ parameters.repo }}
+          app_env: ${{ parameters.environment }}
+
+    # ─── Python Pipeline ────────────────────────────────────────────────────────
+
+    - id: fetch-python-pipeline
+      name: Fetch Python Jenkinsfile
+      if: ${{ parameters.language === "python" }}
+      action: fetch:template
+      input:
+        url: ./template/python
         targetPath: ./
         values:
           app_name: ${{ parameters.repo }}
