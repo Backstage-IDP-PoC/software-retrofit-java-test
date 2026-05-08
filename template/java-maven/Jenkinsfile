@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven3'
+    }
+
     environment {
         APP_NAME = "${{values.app_name}}".toLowerCase().trim()
         DOCKER_IMAGE = "chaitanyapandeygspann/${APP_NAME}"
@@ -50,7 +54,6 @@ pipeline {
                     mvn sonar:sonar \
                       -Dsonar.projectKey=${APP_NAME} \
                       -Dsonar.sources=src/main/java \
-                      -Dsonar.tests=src/test/java
                     '''
                 }
             }

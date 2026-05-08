@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    tools {
+        gradle 'Gradle-8.7'      // ← gradle wala
+        // Python tools block nahi hota ShiningPanda ke bina
+    }
+
     environment {
         APP_NAME = "${{values.app_name}}".toLowerCase().trim()
         DOCKER_IMAGE = "chaitanyapandeygspann/${APP_NAME}"
@@ -50,7 +55,6 @@ pipeline {
                     ./gradlew sonar \
                       -Dsonar.projectKey=${APP_NAME} \
                       -Dsonar.sources=src/main/java \
-                      -Dsonar.tests=src/test/java
                     '''
                 }
             }
