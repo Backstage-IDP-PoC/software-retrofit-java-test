@@ -1,13 +1,7 @@
-FROM node:18-alpine
+FROM eclipse-temurin:17
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY package*.json ./
+COPY target/demo-java-app-1.0.jar app.jar
 
-RUN npm install --omit=dev
-
-COPY . .
-
-EXPOSE 3000
-
-CMD ["node", "server.js"]
+CMD ["java", "-jar", "app.jar"]
