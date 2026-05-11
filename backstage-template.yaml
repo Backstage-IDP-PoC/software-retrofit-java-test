@@ -316,6 +316,7 @@ spec:
       required:
         - repo
         - language
+        - app_port
       properties:
 
         repo:
