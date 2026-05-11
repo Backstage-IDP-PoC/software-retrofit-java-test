@@ -331,10 +331,10 @@ spec:
             - java-gradle
             - python
           enumNames:
-            - "Node.js (npm)       → port 3000"
-            - "Java Maven          → port 8080"
-            - "Java Gradle         → port 8080"
-            - "Python Flask        → port 5000"
+            - "Node.js (npm)"
+            - "Java Maven"      
+            - "Java Gradle"         
+            - "Python Flask"      
 
         environment:
           title: Environment
