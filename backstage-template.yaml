@@ -27,7 +27,7 @@
 # #           allowedHosts:
 # #             - github.com
 # #           allowedOwners:
-# #             - BackstageSSPPoC
+# #             - Backstage-IDP-PoC
 # #           # requestUserCredentials:
 # #           #   secretsKey: USER_OAUTH_TOKEN
 
@@ -86,7 +86,7 @@
 # #       name: Create K8s Manifests Folder
 # #       action: publish:github:pull-request
 # #       input:
-# #         repoUrl: github.com?owner=BackstageSSPPoC&repo=k8s-manifests
+# #         repoUrl: github.com?owner=Backstage-IDP-PoC&repo=k8s-manifest
 # #         branchName: create-${{ parameters.component_id }}
 # #         title: "Add artifact for ${{ parameters.component_id }}"
 # #         description: "This PR creates Kubernetes artifact for ${{ parameters.component_id }}"
@@ -145,7 +145,7 @@
 # #     #   name: Register in Catalog
 # #     #   action: catalog:register
 # #     #   input:
-# #     #     repoContentsUrl: https://github.com/BackstageSSPPoC/${{ parameters.repo }}/blob/main
+# #     #     repoContentsUrl: https://github.com/Backstage-IDP-PoC/${{ parameters.repo }}/blob/main
 # #     #     catalogInfoPath: /catalog-info.yaml
 # #     #     optional: true
 
@@ -153,7 +153,7 @@
 # #       name: Inject CI/CD Directly
 # #       action: github:push
 # #       input:
-# #         repoUrl: github.com?owner=BackstageSSPPoC&repo=${{ parameters.repo }}
+# #         repoUrl: github.com?owner=Backstage-IDP-PoC&repo=${{ parameters.repo }}
 # #         branch: main
 # #         commitMessage: "chore: inject CI/CD template"
 # #         sourcePath: ./
@@ -161,7 +161,7 @@
 # #   output:
 # #     links:
 # #       - title: View Repository
-# #         url: https://github.com/BackstageSSPPoC/${{ parameters.repo | trim }}/tree/main
+# #         url: https://github.com/Backstage-IDP-PoC/${{ parameters.repo | trim }}/tree/main
 
 
 
@@ -286,7 +286,7 @@
 #       name: Inject CI/CD Directly
 #       action: github:push
 #       input:
-#         repoUrl: github.com?owner=BackstageSSPPoC&repo=${{ parameters.repo }}
+#         repoUrl: github.com?owner=Backstage-IDP-PoC&repo=${{ parameters.repo }}
 #         branch: main
 #         commitMessage: "chore: inject ${{ parameters.language }} CI/CD template"
 #         sourcePath: ./
@@ -294,7 +294,7 @@
 #   output:
 #     links:
 #       - title: View Repository
-#         url: https://github.com/BackstageSSPPoC/${{ parameters.repo | trim }}/tree/main
+#         url: https://github.com/Backstage-IDP-PoC/${{ parameters.repo | trim }}/tree/main
 
 
 
@@ -470,7 +470,7 @@ spec:
       name: Inject CI/CD Directly
       action: github:push
       input:
-        repoUrl: github.com?owner=BackstageSSPPoC&repo=${{ parameters.repo }}
+        repoUrl: github.com?owner=Backstage-IDP-PoC&repo=${{ parameters.repo }}
         branch: main
         commitMessage: "chore: inject ${{ parameters.language }} CI/CD template (port: ${{ parameters.app_port }})"
         sourcePath: ./
@@ -478,4 +478,4 @@ spec:
   output:
     links:
       - title: View Repository
-        url: https://github.com/BackstageSSPPoC/${{ parameters.repo | trim }}/tree/main
+        url: https://github.com/Backstage-IDP-PoC/${{ parameters.repo | trim }}/tree/main
